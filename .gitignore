@@ -1,0 +1,9 @@
+otel-config.yaml
+.idea
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl

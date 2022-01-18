@@ -1,0 +1,15 @@
+---
+
+- name: configure collector
+  template:
+    src: otel-config.yaml.j2
+    dest: /etc/otel-contrib-collector/config.yaml
+  when: not collector_as_gw
+
+- name: configure collector
+  template:
+    src: otel-config-gw.yaml.j2
+    dest: /etc/otel-contrib-collector/config.yaml
+  when: collector_as_gw
+
+...

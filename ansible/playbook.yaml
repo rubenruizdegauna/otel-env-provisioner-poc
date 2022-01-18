@@ -1,0 +1,9 @@
+---
+
+- become: yes
+  hosts: all
+  name: testing otel env
+
+  roles:
+    - { name: otel-collector }
+    - { name: otel-collector-config }

@@ -8,6 +8,7 @@ module "ec2-instance" {
   key_name               = "caos-dev-arm"
   subnet_id              = "subnet-09b64de757828cdd4"
   vpc_security_group_ids = ["sg-044ef7bc34691164a"]
+  user_data              = local.user_data
 
   tags = {
     Terraform   = "true"
@@ -15,20 +16,6 @@ module "ec2-instance" {
     owning_team = "CAOS"
   }
 
-}
-
-# simple way of provisioning the minimum to run ansible
-resource "null_resource" "cluster" {
-  connection {
-    host        = module.ec2-instance.private_ip
-    type        = "ssh"
-    user        = "ubuntu"
-    private_key = file(var.pvt_key)
-  }
-
-  provisioner "remote-exec" {
-    inline = ["sudo apt update", "sudo apt install python3 -y", "echo Done!"]
-  }
 }
 
 module "ansible" {

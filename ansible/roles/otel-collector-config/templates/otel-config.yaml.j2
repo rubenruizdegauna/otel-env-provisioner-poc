@@ -23,8 +23,13 @@ exporters:
     logLevel: debug
   otlp:
     endpoint: {{ otlp_endpoint }}
+    {% if is_local -%}
+    tls:
+      insecure: true
+    {% else -%}
     headers:
-      api-key: {{ nr_license_key}}
+      api-key: {{ nr_license_key }}
+    {% endif %}
 
 service:
   pipelines:

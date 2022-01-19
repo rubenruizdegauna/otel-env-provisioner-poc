@@ -9,16 +9,14 @@ receivers:
 
 processors:
   batch:
-  resourcedetection:
-    detectors: [ env, system ]
 
 exporters:
   logging:
     logLevel: debug
   otlp:
     endpoint: otlp.nr-data.net:4317
-    tls:
-      insecure: true
+    headers:
+      api-key: {{ nr_license_key }}
 
 service:
   pipelines:

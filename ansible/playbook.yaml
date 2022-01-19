@@ -5,5 +5,5 @@
   name: testing otel env
 
   roles:
-    - { name: otel-collector }
     - { name: otel-collector-config }
+    - { name: otel-collector }

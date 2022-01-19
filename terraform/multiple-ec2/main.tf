@@ -11,6 +11,7 @@ module "ec2-instance" {
   ami                    = "ami-04511222dedb7385d"
   instance_type          = "t3a.small"
   key_name               = "caos-dev-arm"
+  user_data              = local.user_data
 
   tags = {
     Terraform   = "true"
@@ -29,6 +30,7 @@ module "ec2-instance-gateway" {
   ami           = "ami-04511222dedb7385d"
   instance_type = "t3a.small"
   key_name      = "caos-dev-arm"
+  user_data     = local.user_data
 
   subnet_id              = "subnet-09b64de757828cdd4"
   vpc_security_group_ids = ["sg-044ef7bc34691164a"]
@@ -41,21 +43,6 @@ module "ec2-instance-gateway" {
 
 }
 
-resource "null_resource" "cluster" {
-  for_each = merge(module.ec2-instance.*[0], { gateway : module.ec2-instance-gateway })
-
-  connection {
-    host        = each.value.private_ip
-    type        = "ssh"
-    user        = "ubuntu"
-    private_key = file(var.pvt_key)
-  }
-
-  provisioner "remote-exec" {
-    inline = ["sudo apt update", "sudo apt install python3 -y", "echo Done!"]
-  }
-}
-
 module "ansible-apps" {
 
   source  = "registry.terraform.io/cloudposse/ansible/null"
@@ -66,6 +53,7 @@ module "ansible-apps" {
     format("-e otlp_endpoint=%s:4317", module.ec2-instance-gateway.private_ip),
     "--private-key ${var.pvt_key}",
     "-e nr_license_key=${var.nr_license_key}",
+    "-e is_local=true",
     "--ssh-common-args='-o StrictHostKeyChecking=no'",
     format("-i %s,", join(",", values(module.ec2-instance).*.private_ip)),
   ]
